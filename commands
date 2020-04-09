@@ -1,0 +1,38 @@
+sudo -s
+apt-get update
+apt-get install lamp-server^
+wget http://repo.zabbix.com/zabbix/3.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.0-1+xenial_all.deb
+dpkg -i zabbix-release_3.0-1+xenial_all.deb
+apt-get update
+apt-get install zabbix-server-mysql zabbix-frontend-php
+mysql -u root -p
+CREATE DATABASE zabbixdb;
+GRANT ALL on zabbixdb.* to zabbix@localhost IDENTIFIED BY 'anand';
+FLUSH PRIVILEGES;
+exit
+cd /usr/share/doc/zabbix-server-mysql
+zcat create.sql.gz | mysql -u root -p zabbixdb
+mcedit /etc/zabbix/zabbix_server.conf
+legutolso sorba:
+Update the following
+DBHost=localhost
+DBName=zabbixdb
+DBUser=zabbix
+DBPassword=anand
+-->SAVE
+service apache2 restart
+service zabbix-server restart
+ipconfig = ipaddress/zabbix
+cd /etc/php/7.0/apache2
+nano php.ini
+#Changes:
+date.timezone= Europe/Budapest
+apt-get install php7.0-xml
+apt-get install php7.0-bcmath
+apt-get install php7.0-mbstring
+service apache2 restart
+service zabbix-server restart
+
+Name: Zabbix Server
+Login Name: admin
+Password: zabbix
